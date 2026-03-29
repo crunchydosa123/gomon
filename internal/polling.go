@@ -2,6 +2,7 @@ package polling
 
 import (
 	"context"
+	"net/http"
 	"time"
 
 	"github.com/crunchydosa123/gomon"
@@ -21,7 +22,24 @@ func Start(
 		for {
 			select {
 			case <-ticker.C:
-				// do HTTP check
+				start := time.Now()
+
+				resp, err := http.Get(svc.URL)
+
+				metric := gomon.Metric{
+					ServiceName: svc.Name,
+					Timestamp:   time.Now(),
+				}
+
+				if err != nil {
+					metric.Error = err
+				} else {
+					metric.Status = resp.StatusCode
+					metric.Latency = time.Since(start)
+					resp.Body.Close()
+				}
+
+				out <- metric
 
 			case <-ctx.Done():
 				return

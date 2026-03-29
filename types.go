@@ -13,4 +13,5 @@ type Metric struct {
 	Status      int
 	Latency     time.Duration
 	Error       error
+	Timestamp   time.Time
 }

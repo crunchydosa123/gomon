@@ -1,6 +1,9 @@
 package gomon
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type Gomon struct {
 	services  []Service     // what to monitor
@@ -29,7 +32,11 @@ func New(opts ...Option) *Gomon {
 
 func (g *Gomon) Register(s Service)
 
-func (g *Gomon) Start()
+func (g *Gomon) Start(ctx context.Context) {
+	/*for _, svc := range g.services {
+		polling.Start(ctx, svc, g.metricsCh, g.cfg.timeout)
+	}*/
+}
 
 func (g *Gomon) Stop()
 
