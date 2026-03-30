@@ -30,7 +30,9 @@ func New(opts ...Option) *Gomon {
 	}
 }
 
-func (g *Gomon) Register(s Service)
+func (g *Gomon) Register(s Service) {
+	g.services = append(g.services, s)
+}
 
 func (g *Gomon) Start(ctx context.Context) {
 	/*for _, svc := range g.services {
@@ -38,6 +40,11 @@ func (g *Gomon) Start(ctx context.Context) {
 	}*/
 }
 
-func (g *Gomon) Stop()
+func (g *Gomon) Stop() {
+	close(g.stopCh)
+	close(g.metricsCh)
+}
 
-func (g *Gomon) Subscribe() <-chan Metric
+func (g *Gomon) Subscribe() <-chan Metric {
+	return g.metricsCh
+}
