@@ -1,7 +1,6 @@
 package gomon
 
 import (
-	"context"
 	"time"
 )
 
@@ -26,18 +25,13 @@ func New(opts ...Option) *Gomon {
 	return &Gomon{
 		services:  []Service{},
 		metricsCh: make(chan Metric, cfg.buffer),
+		stopCh:    make(chan struct{}),
 		cfg:       cfg,
 	}
 }
 
 func (g *Gomon) Register(s Service) {
 	g.services = append(g.services, s)
-}
-
-func (g *Gomon) Start(ctx context.Context) {
-	/*for _, svc := range g.services {
-		polling.Start(ctx, svc, g.metricsCh, g.cfg.timeout)
-	}*/
 }
 
 func (g *Gomon) Stop() {
