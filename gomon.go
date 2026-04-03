@@ -1,7 +1,6 @@
 package gomon
 
 import (
-	"net/http"
 	"time"
 )
 
@@ -51,13 +50,16 @@ func (g *Gomon) Subscribe() <-chan Metric {
 }
 
 func (g *Gomon) pollService(s Service) {
-	ticker := time.NewTicker(s.Interval)
+	ticker := time.NewTicker(s.Interval())
 	defer ticker.Stop()
 
 	for {
 		select {
 		case <-ticker.C:
-			metric := g.checkHTTP(s)
+			metric, err := s.Check()
+			if err != nil {
+				metric.Error = err
+			}
 
 			select {
 			case g.metricsCh <- metric:
@@ -68,31 +70,5 @@ func (g *Gomon) pollService(s Service) {
 		case <-g.stopCh:
 			return
 		}
-	}
-}
-
-func (g *Gomon) checkHTTP(s Service) Metric {
-	start := time.Now()
-
-	resp, err := http.Get(s.URL)
-	latency := time.Since(start)
-
-	if err != nil {
-		return Metric{
-			ServiceName: s.Name,
-			Status:      0,
-			Latency:     latency,
-			Error:       err,
-			Timestamp:   time.Now(),
-		}
-	}
-
-	defer resp.Body.Close()
-
-	return Metric{
-		ServiceName: s.Name,
-		Status:      resp.StatusCode,
-		Latency:     latency,
-		Timestamp:   time.Now(),
 	}
 }
