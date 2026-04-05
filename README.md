@@ -14,6 +14,10 @@ A lightweight, concurrent monitoring library in Go for building custom health ch
 
 ---
 
+## Architecture
+![Gomon](https://github.com/user-attachments/assets/23b05011-30d7-49a1-8845-ccf23d6e0a81)
+
+
 ## 📦 Installation
 
 ```bash
